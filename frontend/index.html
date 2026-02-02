@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Brasil API Hub - Serviços públicos brasileiros em um só lugar">
+    <meta name="theme-color" content="#1a56db">
+    <title>🇧🇷 Brasil-API-Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/chat.css">
+</head>
+
+<body>
+<!-- Chat Trigger Button -->
+<button id="chatToggleBtn" aria-label="Abrir chat">
+  <svg viewBox="0 0 24 24">
+    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
+    <path d="M7 9h10v2H7zm0-3h10v2H7zm0 6h7v2H7z"/>
+  </svg>
+</button>
+
+<!-- Chat Modal -->
+<div id="chatModal" class="chat-modal hidden">
+  <!-- Header -->
+  <div class="chat-header">
+    <button id="chatMenuBtn" class="chat-header-btn" aria-label="Menu">
+      <svg viewBox="0 0 24 24">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <h2>Chat por Estado</h2>
+    <button id="chatCloseBtn" class="chat-header-btn" aria-label="Fechar chat">
+      <svg viewBox="0 0 24 24">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Room Tabs -->
+  <div id="chatRooms" class="chat-rooms">
+    <!-- Rooms are rendered by JavaScript -->
+  </div>
+
+  <!-- Messages Area -->
+  <div class="chat-messages">
+    <div class="chat-welcome">
+      <span>Bem-vindo ao chat 🌍</span>
+    </div>
+    <div id="chatMessagesList" class="messages-list">
+      <!-- Messages are rendered by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="chat-input-area">
+    <button class="emoji-btn" aria-label="Emojis">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+        <line x1="9" y1="9" x2="9.01" y2="9"/>
+        <line x1="15" y1="9" x2="15.01" y2="9"/>
+      </svg>
+    </button>
+    <input 
+      type="text" 
+      id="chatInput" 
+      placeholder="Digite sua mensagem..." 
+      autocomplete="off"
+    >
+    <button id="chatSendBtn" class="send-btn" aria-label="Enviar mensagem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Backdrop for mobile -->
+<div id="chatBackdrop" class="chat-backdrop"></div>
+
+    <!-- Modal Estados -->
+    <div class="estado-modal hidden" id="estadoModal">
+        <div class="estado-modal-overlay"></div>
+
+        <div class="estado-modal-content">
+            <button class="estado-modal-close" id="estadoModalClose">×</button>
+
+            <img id="estadoModalImage" alt="Mapa do estado" />
+            <h3 id="estadoModalName"></h3>
+            <p id="estadoModalInfo"></p>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Bracket left -->
+                        <path d="M8 8 L8 52" stroke="#1a56db" stroke-width="4" stroke-linecap="round" />
+                        <path d="M8 8 L16 8" stroke="#1a56db" stroke-width="4" stroke-linecap="round" />
+                        <path d="M8 52 L16 52" stroke="#1a56db" stroke-width="4" stroke-linecap="round" />
+                        <!-- Bracket right -->
+                        <path d="M52 8 L52 52" stroke="#1a56db" stroke-width="4" stroke-linecap="round" />
+                        <path d="M52 8 L44 8" stroke="#1a56db" stroke-width="4" stroke-linecap="round" />
+                        <path d="M52 52 L44 52" stroke="#1a56db" stroke-width="4" stroke-linecap="round" />
+                        <!-- Brazilian flag -->
+                        <rect x="18" y="18" width="24" height="24" rx="2" fill="#009739" />
+                        <polygon points="30,20 42,30 30,40 18,30" fill="#FEDD00" />
+                        <circle cx="30" cy="30" r="6" fill="#012169" />
+                        <path d="M24 30 Q30 26 36 30" stroke="white" stroke-width="1.5" fill="none" />
+                    </svg>
+                </div>
+                <h1 class="logo-text">Brasil-API-Hub</h1>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+                    <span class="theme-icon sun">☀️</span>
+                    <span class="theme-icon moon">🌙</span>
+                </button>
+            </div>
+        </div>
+        <div class="header-border"></div>
+    </header>
+
+    <!-- Subtitle -->
+    <section class="subtitle-section">
+        <p class="subtitle">Serviços públicos brasileiros em um só lugar</p>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Cards Grid -->
+        <div class="cards-grid">
+            <!-- CEP Card -->
+            <article class="card" id="cepCard">
+                <div class="card-header">
+                    <div class="card-icon cep-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                    </div>
+                    <h2 class="card-title">CEP</h2>
+                </div>
+                <p class="card-description">Busque informações de endereços via CEP.</p>
+                <div class="card-form">
+                    <div class="input-group">
+                        <input type="text" id="cepInput" class="input" placeholder="00000-000" maxlength="9"
+                            autocomplete="off">
+                        <button class="btn btn-primary" id="cepBtn">Consultar</button>
+                    </div>
+                </div>
+                <div class="card-result" id="cepResult">
+                    <!-- Skeleton Loading -->
+                    <div class="skeleton-loader hidden" id="cepSkeleton">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line medium"></div>
+                    </div>
+                    <!-- Results -->
+                    <div class="result-content hidden" id="cepContent"></div>
+                </div>
+            </article>
+
+            <!-- Feriados Card -->
+            <article class="card" id="feriadosCard">
+                <div class="card-header">
+                    <div class="card-icon feriado-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                            <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Feriados</h2>
+                </div>
+                <p class="card-description">Veja feriados nacionais e estaduais do Brasil.</p>
+                <div class="card-form">
+                    <div class="input-group">
+                        <select id="feriadoAno" class="select">
+                            <option value="2024">2024</option>
+                            <option value="2025" selected>2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                        </select>
+                        <button class="btn btn-primary" id="feriadoBtn">Consultar</button>
+                    </div>
+                </div>
+                <div class="card-result" id="feriadosResult">
+                    <div class="skeleton-loader hidden" id="feriadosSkeleton">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line medium"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="result-content hidden" id="feriadosContent"></div>
+                </div>
+            </article>
+
+            <!-- Cotação do Dólar Card -->
+            <article class="card" id="dolarCard">
+                <div class="card-header">
+                    <div class="card-icon dolar-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v12M9 9h6M9 15h6" />
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Cotação do Dólar</h2>
+                </div>
+                <p class="card-description">Confira a cotação do dólar em relação ao real</p>
+                <div class="card-form">
+                    <div class="input-group dolar-group">
+                        <div class="dolar-display" id="dolarDisplay">
+                            <span class="dolar-value">R$ --,--</span>
+                        </div>
+                        <button class="btn btn-primary" id="dolarBtn">Ver cotação</button>
+                    </div>
+                </div>
+                <div class="card-result" id="dolarResult">
+                    <div class="skeleton-loader hidden" id="dolarSkeleton">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line medium"></div>
+                    </div>
+                    <div class="result-content hidden" id="dolarContent"></div>
+                </div>
+            </article>
+
+            <!-- Clima Card -->
+            <article class="card" id="climaCard">
+                <div class="card-header">
+                    <div class="card-icon clima-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Clima</h2>
+                </div>
+                <p class="card-description">Obtenha a previsão do tempo para cidade brasileiras.</p>
+                <div class="card-form">
+                    <div class="input-group">
+                        <select id="climaCidade" class="select">
+                            <option value="São Paulo">São Paulo</option>
+                            <option value="Rio de Janeiro">Rio de Janeiro</option>
+                            <option value="Belo Horizonte">Belo Horizonte</option>
+                            <option value="Salvador">Salvador</option>
+                            <option value="Brasília">Brasília</option>
+                            <option value="Curitiba">Curitiba</option>
+                            <option value="Fortaleza">Fortaleza</option>
+                            <option value="Recife">Recife</option>
+                        </select>
+                        <button class="btn btn-primary" id="climaBtn">Consultar</button>
+                    </div>
+                </div>
+                <div class="card-result" id="climaResult">
+                    <div class="skeleton-loader hidden" id="climaSkeleton">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line medium"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="result-content hidden" id="climaContent"></div>
+                </div>
+            </article>
+        </div>
+
+        <!-- Estados do Brasil Section -->
+        <section class="estados-section">
+            <h2 class="section-title">Estados do Brasil</h2>
+
+            <div class="estados-grid" id="estadosGrid">
+                <!-- Estado -->
+                <button class="estado-card" data-sigla="MG" data-estado="Minas Gerais" aria-label="Minas Gerais">
+                    <img src="./assets/states/mg.svg" alt="Mapa de Minas Gerais">
+                    <span class="estado-nome">Minas Gerais</span>
+                </button>
+
+                <button class="estado-card" data-sigla="SP" data-estado="São Paulo" aria-label="São Paulo">
+                    <img src="./assets/states/sp.svg" alt="Mapa de São Paulo">
+                    <span class="estado-nome">São Paulo</span>
+                </button>
+
+                <button class="estado-card" data-sigla="RJ" data-estado="Rio de Janeiro" aria-label="Rio de Janeiro">
+                    <img src="./assets/states/rj.svg" alt="Mapa do Rio de Janeiro">
+                    <span class="estado-nome">Rio de Janeiro</span>
+                </button>
+
+                <button class="estado-card" data-sigla="BA" data-estado="Bahia" aria-label="Bahia">
+                    <img src="./assets/states/ba.svg" alt="Mapa da Bahia">
+                    <span class="estado-nome">Bahia</span>
+                </button>
+
+                <button class="estado-card" data-sigla="PR" data-estado="Paraná" aria-label="Paraná">
+                    <img src="./assets/states/pr.svg" alt="Mapa do Paraná">
+                    <span class="estado-nome">Paraná</span>
+                </button>
+
+                <button class="estado-card" data-sigla="RS" data-estado="Rio Grande do Sul"
+                    aria-label="Rio Grande do Sul">
+                    <img src="./assets/states/rs.svg" alt="Mapa do Rio Grande do Sul">
+                    <span class="estado-nome">Rio Grande do Sul</span>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 Brasil API Hub. Todos os direitos reservados.</p>
+        </footer>
+
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast-container"></div>
+
+        <script src="js/app.js"></script>
+        <script src="js/chat.js"></script>
+</body>
+
+</html>
