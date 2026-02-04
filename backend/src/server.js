@@ -31,7 +31,4 @@ initChatSocket(io);
 /* Porta */
 const PORT = process.env.PORT || 8080;
 
-server.listen(PORT, () => {
-  console.log(`Backend rodando em http://localhost:${PORT}`);
-  console.log('CLIMA ENV KEY =>', process.env.OPENWEATHER_API_KEY);
-});
+
